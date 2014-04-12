@@ -59,8 +59,8 @@ int DataProcessor::load_bmp_file(const string &name)
             cerr << "file size if too large to open: " << file_size << endl;
             return -1;
         }
-        _picture->file_size = file_size;
-        cout << "file size: " << _picture->file_size << endl;
+        _picture->_file_size = file_size;
+        cout << "file size: " << _picture->_file_size << endl;
         buf += 4;
 
         in_file.seekg(4, ios_base::cur);
@@ -73,14 +73,23 @@ int DataProcessor::load_bmp_file(const string &name)
             in_file.close();
             return -1;
         }
-        _picture->bmp_offset = bmp_offset;
-        cout << "bmp offset: " << _picture->bmp_offset << endl;
+        _picture->_bmp_offset = bmp_offset;
+        cout << "bmp offset: " << _picture->_bmp_offset << endl;
         buf += 4;
 
         // goto real picture data
         in_file.seekg(bmp_offset, ios_base::beg);
         in_file.read(buf, file_size - bmp_offset);
+        cout << "pixel num before load data: " << _picture->pixel_num() << endl;
         _picture->set_picture_data(buf, file_size - bmp_offset);
+        cout << "pixel num after load data: " << _picture->pixel_num() << endl;
+
+        /*
+        Pixel *pixel = _picture->get_pixel_by_index(2);
+        printf("%x, %x, %x\n", 0x000000FF & (char)(pixel->_data[0]),
+                0x000000FF & (char)(pixel->_data[1]),
+                0x000000FF & (char)(pixel->_data[2]));
+                */
 
         delete[] p_buf;
         in_file.close();

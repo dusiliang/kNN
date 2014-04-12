@@ -1,9 +1,8 @@
 #include <string.h>
 #include "PictureInfo.h"
 
-int PictureInfo::set_picture_data(const char *data, const int size)
-{
-    _data = new char[size];
-    memcpy(_data, data, size);
-    return 0;
-}
+PictureInfo::PictureInfo () : _file_size(0), _bmp_offset(0), _pixel_num(0)
+{}
+
+PictureInfo::~PictureInfo ()
+{}

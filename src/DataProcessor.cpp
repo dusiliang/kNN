@@ -33,56 +33,87 @@ int DataProcessor::read_smallend(const char *ori, int size, int *result)
     return 0;
 }
 
+int DataProcessor::read_image_str_info(
+        ifstream &in_file, const int size, char *result)
+{
+    if (!in_file)
+    {
+        return -1;
+    }
+    in_file.read(result, size);
+    return 0;
+}
+
+int DataProcessor::read_image_num_info(
+        ifstream &in_file, const int size, int *result)
+{
+    if (!in_file)
+    {
+        return -1;
+    }
+    char *buf = new char[size];
+    in_file.read(buf, size);
+    if (read_smallend(buf, size, result) != 0)
+    {
+        return -1;
+    }
+    delete[] buf;
+    return 0;
+}
+
 int DataProcessor::load_bmp_file(const string &name)
 {
     ifstream in_file(name.c_str(), ifstream::binary);
     if (in_file)
     {
-        char *p_buf = new char[1024 + 1024*1024*100];
-        char *buf = p_buf;
-        in_file.read(buf, 2);
-        cout << buf << endl;
-        buf += 2;
+        char image_type[2];
+        read_image_str_info(in_file, 2, image_type);
+        cout << image_type << endl;
 
-        int file_size = 0;
-        in_file.read(buf, 4);
-        if (read_smallend(buf, 4, &file_size) != 0)
-        {
-            cerr << "get file size error!" << endl;
-            delete[] p_buf;
-            in_file.close();
-            return -1;
-        }
-        if (file_size > 1024*1024*100)
-        {
-            // if file size bigger than 100M
-            cerr << "file size if too large to open: " << file_size << endl;
-            return -1;
-        }
-        _picture->_file_size = file_size;
+        read_image_num_info(in_file, 4, &(_picture->_file_size));
         cout << "file size: " << _picture->_file_size << endl;
-        buf += 4;
 
-        in_file.seekg(4, ios_base::cur);
-        in_file.read(buf, 4);
-        int bmp_offset = 0;
-        if (read_smallend(buf, 4, &bmp_offset) != 0)
+        in_file.seekg(4, ios_base::cur); // 4 empty bytes
+        read_image_num_info(in_file, 4, &(_picture->_bmp_offset));
+        cout << "bmp offset: " << _picture->_bmp_offset << endl;
+
+        // image head info
+        read_image_num_info(in_file, 4, &(_picture->_head_size));
+        cout << "head size: " << _picture->_head_size << endl;
+
+        read_image_num_info(in_file, 4, &(_picture->_image_width));
+        cout << "image width: " << _picture->_image_width << endl;
+
+        read_image_num_info(in_file, 4, &(_picture->_image_height));
+        cout << "image height: " << _picture->_image_height << endl;
+
+        in_file.seekg(2, ios_base::cur);
+        int pixel_size = 0;
+        if (read_image_num_info(in_file, 2, &pixel_size) != 0)
         {
-            cerr << "get bmp offset error!" << endl;
-            delete[] p_buf;
-            in_file.close();
+            cerr << "read pixel size error" << endl;
             return -1;
         }
-        _picture->_bmp_offset = bmp_offset;
-        cout << "bmp offset: " << _picture->_bmp_offset << endl;
-        buf += 4;
+        pixel_size /= 8;
+        cout << "pixel size: " << pixel_size << endl;
+
+        char *meta_data_buf = new char[_picture->_bmp_offset];
+        in_file.seekg(0, ios_base::beg);
+        in_file.read(meta_data_buf, _picture->_bmp_offset);
+        _picture->set_picture_meta_data(meta_data_buf, _picture->_bmp_offset);
+        delete[] meta_data_buf;
 
         // goto real picture data
-        in_file.seekg(bmp_offset, ios_base::beg);
-        in_file.read(buf, file_size - bmp_offset);
-        cout << "pixel num before load data: " << _picture->pixel_num() << endl;
-        _picture->set_picture_data(buf, file_size - bmp_offset);
-        cout << "pixel num after load data: " << _picture->pixel_num() << endl;
+        char *data_buf = new char[_picture->_file_size];
+        in_file.seekg(_picture->_bmp_offset, ios_base::beg);
+        in_file.read(data_buf, _picture->_file_size - _picture->_bmp_offset);
+        cout << "pixel num before load data: " << _picture->_pixel_num << endl;
+        _picture->set_picture_data(
+                data_buf,
+                _picture->_file_size - _picture->_bmp_offset,
+                pixel_size);
+        cout << "pixel num after load data: " << _picture->_pixel_num << endl;
+        delete[] data_buf;
 
         /*
         Pixel *pixel = _picture->get_pixel_by_index(2);
@@ -91,7 +122,6 @@ int DataProcessor::load_bmp_file(const string &name)
                 0x000000FF & (char)(pixel->_data[2]));
                 */
 
-        delete[] p_buf;
         in_file.close();
     }
     return 0;
@@ -99,5 +129,28 @@ int DataProcessor::load_bmp_file(const string &name)
 
 int DataProcessor::generate_train_data(const string &name)
 {
+    return 0;
+}
+
+void DataProcessor::output_image(const string &name)
+{
+    ofstream out_file(name.c_str(), ios::binary);
+    if (!out_file)
+    {
+        return;
+    }
+    out_file.write(_picture->_meta_data, _picture->_bmp_offset);
+    _picture->write_to_file(out_file);
+    out_file.close();
+}
+
+int DataProcessor::set_pixel(const int index, const Pixel &pixel)
+{
+    if (_picture->set_pixel(index, pixel) !=0 )
+    {
+        cerr << "error" << endl;
+        return -1;
+    }
+    const Pixel *p = _picture->get_pixel_by_index(0);
     return 0;
 }

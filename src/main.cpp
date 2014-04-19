@@ -23,7 +23,9 @@ int main(int argc, char *argv[])
     data_processor.set_pixel(4, black_pixel);
     data_processor.set_pixel(5, black_pixel);
 
-    data_processor.output_image("/Users/maxwelldu/Pictures/kNN_test.bmp");
+    data_processor.generate_train_data("knn_train_data");
+
+    //data_processor.output_image("/Users/maxwelldu/Pictures/kNN_test.bmp");
 
     return 0;
 }

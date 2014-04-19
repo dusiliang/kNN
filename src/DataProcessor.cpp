@@ -129,6 +129,24 @@ int DataProcessor::load_bmp_file(const string &name)
 
 int DataProcessor::generate_train_data(const string &name)
 {
+    ofstream out_file(name.c_str());
+    if (!out_file)
+    {
+        return -1;
+    }
+
+    for (int i = 0; i < _picture->_pixel_num; ++i)
+    {
+        const Pixel *pixel = _picture->get_pixel_by_index(i);
+        out_file << i << "\t";
+        for (int j = 0; j < pixel->_pixel_size; ++j)
+        {
+            out_file << "\t" << (int)pixel->_data[i];
+        }
+        out_file << endl;
+    }
+    out_file.close();
+
     return 0;
 }
 

@@ -19,7 +19,7 @@ public:
     void write_to_file(ofstream &out_file) const;
 
     int _pixel_size;
-    vector<char> _data;
+    vector<unsigned char> _data;
 };
 
 class PictureInfo

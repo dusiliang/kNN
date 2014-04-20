@@ -127,7 +127,7 @@ int DataProcessor::load_bmp_file(const string &name)
     return 0;
 }
 
-int DataProcessor::generate_train_data(const string &name)
+int DataProcessor::generate_train_data(const string &name) const
 {
     ofstream out_file(name.c_str());
     if (!out_file)
@@ -138,7 +138,12 @@ int DataProcessor::generate_train_data(const string &name)
     for (int i = 0; i < _picture->_pixel_num; ++i)
     {
         const Pixel *pixel = _picture->get_pixel_by_index(i);
-        out_file << i << "\t";
+        out_file << i;
+
+        unsigned int co[2];
+        get_coordinate_by_index(i, co);
+        out_file << "\t" << co[0] << "\t" << co[1];
+
         for (int j = 0; j < pixel->_pixel_size; ++j)
         {
             out_file << "\t" << (int)pixel->_data[i];
@@ -150,7 +155,7 @@ int DataProcessor::generate_train_data(const string &name)
     return 0;
 }
 
-void DataProcessor::output_image(const string &name)
+void DataProcessor::output_image(const string &name) const
 {
     ofstream out_file(name.c_str(), ios::binary);
     if (!out_file)
@@ -171,4 +176,10 @@ int DataProcessor::set_pixel(const int index, const Pixel &pixel)
     }
     const Pixel *p = _picture->get_pixel_by_index(0);
     return 0;
+}
+
+void DataProcessor::get_coordinate_by_index(const int index, unsigned *result) const
+{
+    result[0] = index % _picture->_image_width;
+    result[1] = index / _picture->_image_width;
 }

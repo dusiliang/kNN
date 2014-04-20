@@ -15,9 +15,10 @@ public:
     ~DataProcessor ();
 
     int load_bmp_file(const string &name);
-    int generate_train_data(const string &name);
-    void output_image(const string &name);
+    int generate_train_data(const string &name) const;
+    void output_image(const string &name) const;
     int set_pixel(const int index, const Pixel &pixel);
+    void get_coordinate_by_index(const int index, unsigned *result) const;
 
 private:
     int read_smallend(const char *ori, int size, int *result);

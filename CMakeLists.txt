@@ -1,6 +1,4 @@
 cmake_minimum_required (VERSION 2.6)
-project (kNN)
+project (IMAGE_RECOGNIZOR)
 
-set (CMAKE_C_COMPILER g++)
-
-add_subdirectory (src bin)
+add_subdirectory (src)

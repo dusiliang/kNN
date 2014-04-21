@@ -1,0 +1,4 @@
+set (LIBRARY_OUTPUT_PATH ${IMAGE_RECOGNIZOR_SOURCE_DIR}/lib)
+set (SRC_LIST mylib.cpp)
+
+add_library(mylib STATIC ${SRC_LIST})

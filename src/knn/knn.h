@@ -11,6 +11,7 @@ public:
     int _pos_x;
     int _pos_y;
     vector<int> _data;
+    int _class_label;
 };
 
 class Neighbor
@@ -29,17 +30,21 @@ public:
     KNN();
 
     int load_training_data(const string &name);
-    int do_train();
+    int init_training_data(const int sample_num);
+    int do_train(const int k);
     int write_result(const string &name);
     double get_distance(const int id1, const int id2) const;
     int get_k_nearest(const int id, const int k, list<Neighbor> &neighbors) const;
     int get_k_sorted_neareast(const int id, const int k,
         list<Neighbor> &neighbors) const;
+    int get_class_label(const int id, const list<Neighbor> &neighbors);
+    int is_same_sample(const int id1, const int id2) const;
 
     size_t get_training_set_size() const;
 
 private:
     vector<Train_data> _train_data;
+    int _class_num;
 };
 
 #endif

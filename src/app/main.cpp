@@ -36,13 +36,15 @@ int main(int argc, char *argv[])
     cout << "distance: " << knn.get_distance(1, 3) << endl;
     cout << "distance: " << knn.get_distance(1, 592) << endl;
     cout << "distance: " << knn.get_distance(2, 592) << endl;
-    */
     list<Neighbor> neighbors;
     knn.get_k_nearest(0, 8, neighbors);
     for (list<Neighbor>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
     {
         cout << (*it)._index << "\t" << (*it)._distance << endl;
     }
+    */
+    knn.do_train(8);
+    knn.write_result("knn_train_result");
 
     return 0;
 }

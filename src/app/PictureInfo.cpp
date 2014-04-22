@@ -38,6 +38,7 @@ int Pixel::set_data(const char *data)
         return -1;
     }
 
+    _data.clear();
     for (int i = 0; i < _pixel_size; ++i)
     {
         _data.push_back(data[i]);
@@ -126,6 +127,7 @@ int PictureInfo::set_pixel(const int index, const Pixel &pixel)
 {
     if (pixel._pixel_size != _data[index]._pixel_size)
     {
+        printf("pixel size: %d, data pixel size: %d\n", pixel._pixel_size, _data[index]._pixel_size);
         return -1;
     }
     _data[index].set_pixel(pixel);

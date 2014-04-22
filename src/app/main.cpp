@@ -9,8 +9,9 @@ int main(int argc, char *argv[])
 {
     PictureInfo picture_info;
     DataProcessor data_processor(&picture_info);
-    data_processor.load_bmp_file("/Users/maxwelldu/Pictures/1_inch_bmp.bmp");
+    data_processor.load_bmp_file(argv[1]);
 
+/*
     vector<char> p;
     p.push_back(25);
     p.push_back(25);
@@ -27,8 +28,9 @@ int main(int argc, char *argv[])
     data_processor.generate_train_data("knn_train_data");
 
     //data_processor.output_image("/Users/maxwelldu/Pictures/kNN_test.bmp");
+    */
 
-    KNN knn;
+    KNN knn(atoi(argv[2]));
     knn.load_training_data("knn_train_data");
     cout << "training set size: " << knn.get_training_set_size() << endl;
     /*
@@ -45,6 +47,9 @@ int main(int argc, char *argv[])
     */
     knn.do_train(8);
     knn.write_result("knn_train_result");
+
+    data_processor.load_train_result("knn_train_result");
+    data_processor.output_image("result_bmp.bmp");
 
     return 0;
 }

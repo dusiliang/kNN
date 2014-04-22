@@ -1,5 +1,6 @@
 #include <fstream>
 #include <list>
+#include <map>
 #include <vector>
 #include "mylib.h"
 
@@ -12,7 +13,10 @@ Neighbor::Neighbor() : _index(0), _distance(0.0) {}
 Neighbor::Neighbor(const int index, const double dis) : _index(index), _distance(dis)
 {}
 
-KNN::KNN() : _class_num(0)
+KNN::KNN() : _class_num(0), _SAME_THRESHOLD(200)
+{}
+
+KNN::KNN(const int threshold) : _class_num(0), _SAME_THRESHOLD(threshold)
 {}
 
 int KNN::load_training_data(const string &name)
@@ -108,6 +112,197 @@ int KNN::get_k_nearest(const int id, const int k, list<Neighbor> &neighbors) con
     return 0;
 }
 
+int KNN::get_max_x() const
+{
+    return _train_data.back()._pos_x;
+}
+
+int KNN::get_max_y() const
+{
+    return _train_data.back()._pos_y;
+}
+
+int KNN::get_k_nearest(const int id, list<Neighbor> &neighbors) const
+{
+    int min_x = 0;
+    int min_y = 0;
+    int max_x = get_max_x();
+    int max_y = get_max_y();
+
+    if (_train_data[id]._pos_x == min_x || _train_data[id]._pos_y == min_y)
+    {
+        Neighbor tmp1(id + 1, 1);
+        Neighbor tmp2(id + 2, 4);
+        Neighbor tmp3(id + max_x + 1, 1);
+        Neighbor tmp4(id + max_x + 2, 2);
+        Neighbor tmp5(id + max_x + 3, 13);
+        Neighbor tmp6(id + 2*(max_x + 1), 4);
+        Neighbor tmp7(id + 2*(max_x + 1) + 1, 13);
+        Neighbor tmp8(id + 2*(max_x + 1) + 2, 18);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == min_x || _train_data[id]._pos_y == max_y)
+    {
+        Neighbor tmp1(id + 1, 1);
+        Neighbor tmp2(id + 2, 4);
+        Neighbor tmp3(id - max_x - 1, 1);
+        Neighbor tmp4(id - max_x, 2);
+        Neighbor tmp5(id - max_x + 1, 13);
+        Neighbor tmp6(id - 2*(max_x + 1), 4);
+        Neighbor tmp7(id - 2*(max_x + 1) + 1, 13);
+        Neighbor tmp8(id - 2*(max_x + 1) + 2, 18);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == max_x || _train_data[id]._pos_y == min_y)
+    {
+        Neighbor tmp1(id - 1, 1);
+        Neighbor tmp2(id - 2, 4);
+        Neighbor tmp3(id + max_x + 1, 1);
+        Neighbor tmp4(id + max_x, 2);
+        Neighbor tmp5(id + max_x - 1, 13);
+        Neighbor tmp6(id + 2*(max_x + 1), 4);
+        Neighbor tmp7(id + 2*(max_x + 1) - 1, 13);
+        Neighbor tmp8(id + 2*(max_x + 1) - 2, 18);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == max_x || _train_data[id]._pos_y == max_y)
+    {
+        Neighbor tmp1(id - 1, 1);
+        Neighbor tmp2(id - 2, 4);
+        Neighbor tmp3(id - max_x - 1, 1);
+        Neighbor tmp4(id - max_x - 2, 2);
+        Neighbor tmp5(id - max_x - 3, 13);
+        Neighbor tmp6(id - 2*(max_x + 1), 4);
+        Neighbor tmp7(id - 2*(max_x + 1) - 1, 13);
+        Neighbor tmp8(id - 2*(max_x + 1) - 2, 18);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == min_x)
+    {
+        Neighbor tmp1(id - (max_x + 1), 1);
+        Neighbor tmp2(id - (max_x + 1) + 1, 4);
+        Neighbor tmp3(id - (max_x + 1) + 2, 13);
+        Neighbor tmp4(id + 1, 2);
+        Neighbor tmp5(id + 2, 4);
+        Neighbor tmp6(id + (max_x + 1), 1);
+        Neighbor tmp7(id + (max_x + 1) + 1, 4);
+        Neighbor tmp8(id + (max_x + 1) + 2, 13);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == max_x)
+    {
+        Neighbor tmp1(id - (max_x + 1), 1);
+        Neighbor tmp2(id - (max_x + 1) - 1, 4);
+        Neighbor tmp3(id - (max_x + 1) - 2, 13);
+        Neighbor tmp4(id - 1, 2);
+        Neighbor tmp5(id - 2, 4);
+        Neighbor tmp6(id + (max_x + 1), 1);
+        Neighbor tmp7(id + (max_x + 1) - 1, 4);
+        Neighbor tmp8(id + (max_x + 1) - 2, 13);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == min_y)
+    {
+        Neighbor tmp1(id + (max_x + 1), 1);
+        Neighbor tmp2(id + (max_x + 1) - 1, 4);
+        Neighbor tmp3(id + (max_x + 1) + 1, 4);
+        Neighbor tmp4(id - 1, 1);
+        Neighbor tmp5(id + 1, 1);
+        Neighbor tmp6(id + 2*(max_x + 1), 4);
+        Neighbor tmp7(id + 2*(max_x + 1) - 1, 13);
+        Neighbor tmp8(id + 2*(max_x + 1) + 1, 13);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else if (_train_data[id]._pos_x == max_y)
+    {
+        Neighbor tmp1(id - (max_x + 1), 1);
+        Neighbor tmp2(id - (max_x + 1) - 1, 4);
+        Neighbor tmp3(id - (max_x + 1) + 1, 4);
+        Neighbor tmp4(id - 1, 1);
+        Neighbor tmp5(id + 1, 1);
+        Neighbor tmp6(id - 2*(max_x + 1), 4);
+        Neighbor tmp7(id - 2*(max_x + 1) - 1, 13);
+        Neighbor tmp8(id - 2*(max_x + 1) + 1, 13);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    else
+    {
+        Neighbor tmp1(id - (max_x + 1), 1);
+        Neighbor tmp2(id - (max_x + 1) - 1, 2);
+        Neighbor tmp3(id - (max_x + 1) + 1, 2);
+        Neighbor tmp4(id - 1, 1);
+        Neighbor tmp5(id + 1, 1);
+        Neighbor tmp6(id + (max_x + 1), 1);
+        Neighbor tmp7(id + (max_x + 1) - 1, 2);
+        Neighbor tmp8(id + (max_x + 1) + 1, 2);
+        neighbors.push_back(tmp1);
+        neighbors.push_back(tmp2);
+        neighbors.push_back(tmp3);
+        neighbors.push_back(tmp4);
+        neighbors.push_back(tmp5);
+        neighbors.push_back(tmp6);
+        neighbors.push_back(tmp7);
+        neighbors.push_back(tmp8);
+    }
+    return 0;
+}
+
 int KNN::get_k_sorted_neareast(const int id, const int k, list<Neighbor> &neighbors) const
 {
     return 0;
@@ -127,9 +322,11 @@ int KNN::do_train(const int k)
             printf("trained %lu lines...\n", i);
         }
         list<Neighbor> neighbors;
-        get_k_nearest(i, k, neighbors);
+        //get_k_nearest(i, k, neighbors);
+        get_k_nearest(i, neighbors);
         get_class_label(i, neighbors);
     }
+    printf("class label number: %d\n", _class_num);
     return 0;
 }
 
@@ -169,12 +366,16 @@ int KNN::is_same_sample(const int id1, const int id2) const
         return -1;
     }
 
+    int diff = 0;
     for (size_t i = 0; i < data1._data.size(); ++i)
     {
-        if ((data1._data[i] & 0xFFFFFFF0) != (data2._data[i] & 0xFFFFFFF0))
-        {
-            return 0;
-        }
+        //if ((data1._data[i] & 0xFFFFFFE0) != (data2._data[i] & 0xFFFFFFE0))
+        diff += abs(data1._data[i] - data2._data[i]);
+        //printf("diff: %d\n", diff);
+    }
+    if (diff > _SAME_THRESHOLD)
+    {
+        return 0;
     }
 
     return 1;
@@ -204,31 +405,41 @@ int KNN::get_class_label(const int id, const list<Neighbor> &neighbors)
     }
 
     // get class label
-    int label = -1;
+    map<int, int> label_map;
+    int top_label = -1;
+    int top_label_count = 0;
     for (size_t i = 0; i < same_samples.size(); ++i)
     {
         if (_train_data[same_samples[i]]._class_label != -1)
         {
-            label = _train_data[same_samples[i]]._class_label;
-            break;
+            int tmp_num = ++label_map[_train_data[same_samples[i]]._class_label];
+            if (tmp_num > top_label_count)
+            {
+                top_label = _train_data[same_samples[i]]._class_label;
+                top_label_count = tmp_num;
+            }
         }
     }
-    if (label == -1)
+    if (top_label == -1)
     {
-        label = ++_class_num;
+        top_label = ++_class_num;
     }
     for (size_t i = 0; i < same_samples.size(); ++i)
     {
         /*
         if (_train_data[same_samples[i]]._class_label != -1
-            && _train_data[same_samples[i]]._class_label != lable)
+            && _train_data[same_samples[i]]._class_label != label)
         {
             // something wrong;
+            printf("wrong, id: %d, other id: %d\n", id, same_samples[i]);
         }
         */
-        _train_data[same_samples[i]]._class_label = label;
+        if (_train_data[same_samples[i]]._class_label == -1)
+        {
+            _train_data[same_samples[i]]._class_label = top_label;
+        }
     }
-    _train_data[id]._class_label = label;
+    _train_data[id]._class_label = top_label;
 
     return 0;
 }

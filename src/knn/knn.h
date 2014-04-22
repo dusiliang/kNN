@@ -28,6 +28,7 @@ class KNN
 {
 public:
     KNN();
+    KNN(const int threshold);
 
     int load_training_data(const string &name);
     int init_training_data(const int sample_num);
@@ -35,6 +36,7 @@ public:
     int write_result(const string &name);
     double get_distance(const int id1, const int id2) const;
     int get_k_nearest(const int id, const int k, list<Neighbor> &neighbors) const;
+    int get_k_nearest(const int id, list<Neighbor> &neighbors) const;
     int get_k_sorted_neareast(const int id, const int k,
         list<Neighbor> &neighbors) const;
     int get_class_label(const int id, const list<Neighbor> &neighbors);
@@ -45,6 +47,10 @@ public:
 private:
     vector<Train_data> _train_data;
     int _class_num;
+    const int _SAME_THRESHOLD;
+
+    int get_max_x() const;
+    int get_max_y() const;
 };
 
 #endif

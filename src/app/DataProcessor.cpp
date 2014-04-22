@@ -1,6 +1,8 @@
 #include <fstream>
 #include <iostream>
+#include <map>
 
+#include "mylib.h"
 #include "DataProcessor.h"
 
 using namespace std;
@@ -182,4 +184,38 @@ void DataProcessor::get_coordinate_by_index(const int index, unsigned *result) c
 {
     result[0] = index % _picture->_image_width;
     result[1] = index / _picture->_image_width;
+}
+
+int DataProcessor::load_train_result(const string &name)
+{
+    map<int, Pixel> label_color;
+
+    ifstream in_file(name.c_str());
+    if (!in_file)
+    {
+        return -1;
+    }
+
+    string line;
+    while (getline(in_file, line))
+    {
+        vector<string> fields;
+        split_string(line, '\t', fields);
+        Pixel pixel;
+        pixel._pixel_size = 3;
+        char pixel_str[3];
+        pixel_str[0] = (unsigned char)atoi(fields[3].c_str());
+        pixel_str[1] = (unsigned char)atoi(fields[4].c_str());
+        pixel_str[2] = (unsigned char)atoi(fields[5].c_str());
+        pixel.set_data(pixel_str);
+        int label = atoi(fields[6].c_str());
+        if (label_color.find(label) == label_color.end())
+        {
+            label_color[label] = pixel;
+        }
+
+        set_pixel(atoi(fields[0].c_str()), label_color[label]);
+    }
+    in_file.close();
+    return 0;
 }

@@ -1,5 +1,5 @@
 set (EXECUTABLE_OUTPUT_PATH ${IMAGE_RECOGNIZOR_SOURCE_DIR}/bin)
-set (SRC_LIST main.cpp DataProcessor.cpp PictureInfo.cpp)
+set (SRC_LIST main.cpp DataProcessor.cpp PictureInfo.cpp LabeledDataProcessor.cpp)
 
 include_directories (${IMAGE_RECOGNIZOR_SOURCE_DIR}/src/mylib)
 include_directories (${IMAGE_RECOGNIZOR_SOURCE_DIR}/src/knn)

@@ -1,15 +1,28 @@
 #include <iostream>
-#include "DataProcessor.h"
+#include "LabeledDataProcessor.h"
 #include "knn.h"
-#include "PictureInfo.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
-    PictureInfo picture_info;
-    DataProcessor data_processor(&picture_info);
-    data_processor.load_bmp_file(argv[1]);
+    if (argc < 4)
+    {
+        cerr << "Usage: " << argv[0]
+             << " base_image positive_image negtive_image train_file" << endl;
+        return -1;
+    }
+
+    const string base_image_name = argv[1];
+    const string positive_image_name = argv[2];
+    const string negtive_image_name = argv[3];
+    const string train_file_name = argv[4];
+
+    LabeledDataProcessor data_processor;
+    data_processor.load_base_bmp_file(base_image_name);
+    data_processor.load_positive_image(positive_image_name);
+    data_processor.load_negtive_image(negtive_image_name);
+    data_processor.generate_train_data(train_file_name);
 
 /*
     vector<char> p;
@@ -30,26 +43,16 @@ int main(int argc, char *argv[])
     //data_processor.output_image("/Users/maxwelldu/Pictures/kNN_test.bmp");
     */
 
+    /*
     KNN knn(atoi(argv[2]));
     knn.load_training_data("knn_train_data");
     cout << "training set size: " << knn.get_training_set_size() << endl;
-    /*
-    cout << "distance: " << knn.get_distance(1, 2) << endl;
-    cout << "distance: " << knn.get_distance(1, 3) << endl;
-    cout << "distance: " << knn.get_distance(1, 592) << endl;
-    cout << "distance: " << knn.get_distance(2, 592) << endl;
-    list<Neighbor> neighbors;
-    knn.get_k_nearest(0, 8, neighbors);
-    for (list<Neighbor>::iterator it = neighbors.begin(); it != neighbors.end(); ++it)
-    {
-        cout << (*it)._index << "\t" << (*it)._distance << endl;
-    }
-    */
     knn.do_train(8);
     knn.write_result("knn_train_result");
 
     data_processor.load_train_result("knn_train_result");
     data_processor.output_image("result_bmp.bmp");
+    */
 
     return 0;
 }

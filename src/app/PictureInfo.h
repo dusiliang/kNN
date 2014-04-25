@@ -17,6 +17,8 @@ public:
     int set_pixel(const Pixel &pixel);
     int set_data(const char *data);
     void write_to_file(ofstream &out_file) const;
+    bool operator==(const Pixel &pixel) const;
+    bool operator!=(const Pixel &pixel) const;
 
     int _pixel_size;
     vector<unsigned char> _data;
@@ -25,6 +27,7 @@ public:
 class PictureInfo
 {
     friend class DataProcessor;
+    friend class LabeledDataProcessor;
 
 public:
     PictureInfo ();

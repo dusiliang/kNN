@@ -11,6 +11,27 @@ Pixel::Pixel() : _pixel_size(0)
 Pixel::~Pixel()
 {}
 
+bool Pixel::operator==(const Pixel &pixel) const
+{
+    if (_pixel_size != pixel._pixel_size)
+    {
+        return false;
+    }
+    for (int i = 0; i < _pixel_size; ++i)
+    {
+        if (_data[i] != pixel._data[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Pixel::operator!=(const Pixel &pixel) const
+{
+    return !(*this == pixel);
+}
+
 int Pixel::set_pixel(const vector<char> &pixel)
 {
     for (int i = 0; i < pixel.size(); ++i)

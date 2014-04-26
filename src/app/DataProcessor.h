@@ -16,8 +16,8 @@ public:
     int load_base_bmp_file(const string &name);
 
     int generate_train_data(const string &name) const;
-    void output_image(const string &name) const;
-    int set_pixel(const int index, const Pixel &pixel);
+    int output_image(const PictureInfo &picture, const string &name) const;
+    int set_pixel(PictureInfo &picture, const int index, const Pixel &pixel);
     void get_coordinate_by_index(const int index, unsigned *result) const;
     int load_train_result(const string &name);
 
@@ -28,7 +28,7 @@ private:
 
 protected:
     int load_bmp_file(const string &name, PictureInfo *picture);
-    
+
     /* data */
     PictureInfo _picture;
 

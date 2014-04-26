@@ -2,10 +2,11 @@
 #define _KNN_H_
 
 #include <list>
+#include <vector>
 
 using namespace std;
 
-class Train_data
+class TrainData
 {
 public:
     int _pos_x;
@@ -44,8 +45,8 @@ public:
 
     size_t get_training_set_size() const;
 
-private:
-    vector<Train_data> _train_data;
+protected:
+    vector<TrainData> _train_data;
     int _class_num;
     const int _SAME_THRESHOLD;
 

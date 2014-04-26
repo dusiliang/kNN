@@ -11,6 +11,17 @@ Pixel::Pixel() : _pixel_size(0)
 Pixel::~Pixel()
 {}
 
+int Pixel::diff(const Pixel *p) const
+{
+    int diff = 0;
+    for (int i = 0; i < _pixel_size; ++i)
+    {
+        int tmp = _data[i] - p->_data[i];
+        diff += tmp * tmp;
+    }
+    return diff;
+}
+
 bool Pixel::operator==(const Pixel &pixel) const
 {
     if (_pixel_size != pixel._pixel_size)
@@ -44,6 +55,10 @@ int Pixel::set_pixel(const vector<char> &pixel)
 
 int Pixel::set_pixel(const Pixel &pixel)
 {
+    if (_data.size() != pixel._pixel_size)
+    {
+        _data.resize(pixel._pixel_size);
+    }
     for (int i = 0; i < pixel._pixel_size; ++i)
     {
         _data[i] = pixel._data[i];
@@ -78,7 +93,7 @@ void Pixel::write_to_file(ofstream &out_file) const
 PictureInfo::PictureInfo () :
         _file_size(0), _bmp_offset(0), _head_size(0),
         _image_width(0), _image_height(0), _pixel_num(0),
-        _meta_data(0), _data(0)
+        _pixel_size(0), _meta_data_size(0), _meta_data(0), _data(0)
 {}
 
 PictureInfo::~PictureInfo ()
@@ -96,6 +111,7 @@ int PictureInfo::set_picture_meta_data(const char *data, const int size)
 
     _meta_data = new char[size];
     memcpy(_meta_data, data, size);
+    _meta_data_size = size;
 
     return 0;
 }
@@ -120,6 +136,7 @@ int PictureInfo::set_picture_data(
     const char *pixel_ptr = data;
     _pixel_num = size / pixel_size;
     _data = new Pixel[_pixel_num];
+    _pixel_size = pixel_size;
 
     for (int i = 0; i < _pixel_num; ++i)
     {
@@ -146,11 +163,32 @@ void PictureInfo::write_to_file(ofstream &out_file) const
 
 int PictureInfo::set_pixel(const int index, const Pixel &pixel)
 {
-    if (pixel._pixel_size != _data[index]._pixel_size)
+    if (_pixel_size == 0)
     {
-        printf("pixel size: %d, data pixel size: %d\n", pixel._pixel_size, _data[index]._pixel_size);
+        _pixel_size = pixel._pixel_size;
+    }
+    else if (pixel._pixel_size != _pixel_size)
+    {
         return -1;
     }
     _data[index].set_pixel(pixel);
+    return 0;
+}
+
+int PictureInfo::copy_meta_data(const PictureInfo &picture)
+{
+    _file_size = picture.get_file_size();
+    _bmp_offset = picture.get_bmp_offset();
+    _head_size = picture.get_head_size();
+    _image_width = picture.get_image_width();
+    _image_height = picture.get_image_height();
+    _pixel_num = picture.get_pixel_num();
+    _pixel_size = picture.get_pixel_size();
+
+    _meta_data_size = picture.get_meta_data_size();
+    _meta_data = new char[_meta_data_size];
+    memcpy(_meta_data, picture.get_meta_data(), _meta_data_size);
+
+    _data = new Pixel[_pixel_num];
     return 0;
 }

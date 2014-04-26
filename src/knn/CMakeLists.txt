@@ -1,5 +1,5 @@
 set (LIBRARY_OUTPUT_PATH ${IMAGE_RECOGNIZOR_SOURCE_DIR}/lib)
-set (SRC_LIST knn.cpp)
+set (SRC_LIST knn.cpp LabeledKnn.cpp TrainData.h)
 
 set (CMAKE_C_COMPILER c++)
 

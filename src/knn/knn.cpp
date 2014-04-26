@@ -38,7 +38,7 @@ int KNN::load_training_data(const string &name)
             status = -1;
             break;
         }
-        Train_data train_data;
+        TrainData train_data;
         train_data._pos_x = atoi(fields[1].c_str());
         train_data._pos_y = atoi(fields[2].c_str());
         for (size_t i = 3; i < fields.size(); ++i)
@@ -358,8 +358,8 @@ size_t KNN::get_training_set_size() const
 
 int KNN::is_same_sample(const int id1, const int id2) const
 {
-    const Train_data &data1 = _train_data[id1];
-    const Train_data &data2 = _train_data[id2];
+    const TrainData &data1 = _train_data[id1];
+    const TrainData &data2 = _train_data[id2];
 
     if (data1._data.size() != data2._data.size())
     {

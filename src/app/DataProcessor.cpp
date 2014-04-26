@@ -150,23 +150,24 @@ int DataProcessor::generate_train_data(const string &name) const
     return 0;
 }
 
-void DataProcessor::output_image(const string &name) const
+int DataProcessor::output_image(const PictureInfo &picture, const string &name) const
 {
     ofstream out_file(name.c_str(), ios::binary);
     if (!out_file)
     {
-        return;
+        return -1;
     }
-    out_file.write(_picture._meta_data, _picture._bmp_offset);
-    _picture.write_to_file(out_file);
+    out_file.write(picture._meta_data, picture._bmp_offset);
+    picture.write_to_file(out_file);
     out_file.close();
+    return 0;
 }
 
-int DataProcessor::set_pixel(const int index, const Pixel &pixel)
+int DataProcessor::set_pixel(
+    PictureInfo &picture, const int index, const Pixel &pixel)
 {
-    if (_picture.set_pixel(index, pixel) !=0 )
+    if (picture.set_pixel(index, pixel) != 0)
     {
-        cerr << "error" << endl;
         return -1;
     }
 
@@ -207,7 +208,7 @@ int DataProcessor::load_train_result(const string &name)
             label_color[label] = pixel;
         }
 
-        set_pixel(atoi(fields[0].c_str()), label_color[label]);
+        set_pixel(_picture, atoi(fields[0].c_str()), label_color[label]);
     }
     in_file.close();
     return 0;

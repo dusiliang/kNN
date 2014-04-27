@@ -1,0 +1,12 @@
+#ifndef __SLD_LIB_STRING_H__
+#define __SLD_LIB_STRING_H__
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+// string
+int split_string(const string &ori_str, const char splitor, vector<string> &result);
+
+#endif

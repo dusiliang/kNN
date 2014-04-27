@@ -2,7 +2,7 @@
 #include <iostream>
 #include <map>
 
-#include "mylib.h"
+#include "SLDString.h"
 #include "TrainData.h"
 
 #include "LabeledKnn.h"

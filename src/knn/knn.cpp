@@ -2,7 +2,7 @@
 #include <list>
 #include <map>
 #include <vector>
-#include "mylib.h"
+#include "SLDString.h"
 
 #include "knn.h"
 

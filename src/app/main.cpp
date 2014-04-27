@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
     if (argc < 8)
     {
         cerr << "Usage: " << argv[0]
-             << " base_image positive_image negtive_image train_file train_result k"
-             << " result_image" << endl;
+             << " base_image [-p positive_image] [-n negtive_image] [-td train_file]"
+             << " train_result k result_image" << endl;
         return -1;
     }
 
@@ -28,14 +28,15 @@ int main(int argc, char *argv[])
     data_processor.load_negtive_image(negtive_image_name);
     int train_data_num = data_processor.generate_train_data(train_file_name);
     cout << "generate train data done! " << train_data_num << endl;
+    */
 
     LabeledKnn knn(atoi(argv[6]));
     int train_data_size = knn.load_training_data(train_file_name);
     cout << "train data size: " << train_data_size << endl;
+    cout << "start training, k = " << knn.get_k() << endl;
     knn.do_train();
     knn.output_result(train_result_name);
     cout << "train done!" << endl;
-    */
 
     cout << "loading train result..." << endl;
     data_processor.load_train_result(train_result_name);

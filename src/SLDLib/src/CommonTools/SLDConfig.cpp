@@ -12,6 +12,9 @@ SLDConfig::SLDConfig(const string &name) : _config_file_name(name)
     load_config_file();
 }
 
+SLDConfig::~SLDConfig()
+{}
+
 int SLDConfig::load_config_file()
 {
     ifstream in_file(_config_file_name.c_str());

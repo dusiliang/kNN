@@ -10,6 +10,7 @@ public:
     virtual ~SLDConfig();
 
     void output_config() const;
+    inline const map<string, string> &get_config() const {return _config_map;}
 
 private:
     int load_config_file();
